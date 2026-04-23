@@ -301,6 +301,31 @@
       font-weight: 700;
     }
 
+    .bilingual-date {
+      display: grid;
+      gap: 0.14rem;
+    }
+
+    .date-en {
+      display: block;
+    }
+
+    .date-ar {
+      display: block;
+      font-family: "Noto Naskh Arabic", serif;
+      font-size: 1.05rem;
+      line-height: 1.45;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--accent);
+      direction: rtl;
+      unicode-bidi: plaintext;
+    }
+
+    .hero-meta-note.bilingual-date {
+      gap: 0;
+    }
+
     .arabic {
       font-family: "Noto Naskh Arabic", serif;
       font-size: clamp(1.15rem, 2vw, 1.5rem);
@@ -746,6 +771,18 @@
       color: var(--text);
     }
 
+    .timeline-copy .bilingual-date {
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-copy .bilingual-date strong {
+      margin-bottom: 0;
+    }
+
+    .timeline-copy .date-ar {
+      color: var(--accent-strong);
+    }
+
     .timeline-copy p {
       color: var(--muted);
       line-height: 1.75;
@@ -1150,7 +1187,8 @@
             <div class="hero-intro-card">
               <div class="hero-meta">
                 <span class="hero-chip">Wedding Invitation</span>
-                <span class="hero-meta-note">Monday, 5 Muharram 1448 AH (approximate)</span>
+                <span class="hero-meta-note bilingual-date">
+                  <span class="date-en">Monday, 20 July 2026 • 5 Muharram 1448 AH</span>    </span>
               </div>
               <p class="arabic" lang="ar">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
               <h1 class="hero-title-alt">
@@ -1291,7 +1329,8 @@
               <article class="timeline-item">
                 <div class="timeline-time">Date</div>
                 <div class="timeline-copy">
-                  <strong>Monday, 20 July 2026</strong>
+                  <div class="bilingual-date">
+                    <strong>Monday, 20 July 2026 • 5 Muharram 1448 AH</strong> </div>
                   <p>Please join us for a gracious daytime gathering of faith, family, and celebration.</p>
                 </div>
               </article>
@@ -1305,10 +1344,11 @@
               </article>
 
               <article class="timeline-item">
-                <div class="timeline-time">Note</div>
+                <div class="timeline-time">Hijri</div>
                 <div class="timeline-copy">
-                  <strong>Hijri Date</strong>
-                  <p>Monday, 5 Muharram 1448 AH (approximate)</p>
+                  <div class="bilingual-date">
+                    <strong>Monday, 5 Muharram 1448 AH (approximate)</strong> </div>
+                  <p>The Hijri date is included as a helpful reference for guests and family.</p>
                 </div>
               </article>
 
