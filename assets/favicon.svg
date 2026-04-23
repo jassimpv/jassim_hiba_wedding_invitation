@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="12" y1="10" x2="52" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fffaf5" />
+      <stop offset="1" stop-color="#f2e3d6" />
+    </linearGradient>
+    <linearGradient id="spark" x1="44" y1="12" x2="54" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a6ba9e" />
+      <stop offset="1" stop-color="#8ea28b" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#bg)" />
+  <rect x="4.75" y="4.75" width="54.5" height="54.5" rx="17.25" fill="none" stroke="#d8c2ae" stroke-width="1.5" />
+  <path d="M48 11.5l1.9 3.8 4.1 1.6-3 2.9.7 4.3-3.7-2-3.7 2 .7-4.3-3-2.9 4.1-1.6Z" fill="url(#spark)" />
+  <text
+    x="32"
+    y="40"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="24"
+    font-weight="700"
+    letter-spacing="1.2"
+    fill="#724d33">JH</text>
+</svg>
