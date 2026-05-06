@@ -387,6 +387,7 @@
               <th>Record</th>
               <th>Visitor</th>
               <th>IP Address</th>
+              <th>IP Location</th>
               <th>Created</th>
               <th>Page</th>
               <th>Referrer</th>
@@ -413,8 +414,10 @@
     const uniqueVisitors = document.getElementById("uniqueVisitors");
     const uniqueIps = document.getElementById("uniqueIps");
     const todayVisits = document.getElementById("todayVisits");
+    const ipApiBase = "http://ip-api.com/json/";
 
     let records = [];
+    const ipInfoCache = new Map();
 
     const escapeHtml = (value) => String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -475,6 +478,42 @@
       };
     };
 
+    const getIpInfo = async (ipAddress) => {
+      if (!ipAddress) {
+        return null;
+      }
+
+      if (ipInfoCache.has(ipAddress)) {
+        return ipInfoCache.get(ipAddress);
+      }
+
+      try {
+        const response = await fetch(`${ipApiBase}${encodeURIComponent(ipAddress)}?fields=status,message,query,country,countryCode,regionName,city,zip,lat,lon,timezone,isp,org,as`, {
+          cache: "force-cache"
+        });
+
+        if (!response.ok) {
+          throw new Error(`IP lookup failed with ${response.status}`);
+        }
+
+        const result = await response.json();
+        const value = result.status === "success" ? result : null;
+
+        ipInfoCache.set(ipAddress, value);
+        return value;
+      } catch (error) {
+        ipInfoCache.set(ipAddress, null);
+        return null;
+      }
+    };
+
+    const loadIpInfo = async () => {
+      const ips = [...new Set(records.map((record) => record.ip_address).filter(Boolean))];
+
+      await Promise.all(ips.map(getIpInfo));
+      renderRows();
+    };
+
     const formatDate = (value) => {
       if (!value) {
         return "";
@@ -532,6 +571,16 @@
         const battery = record.message.battery || {};
         const storage = record.message.storage || {};
         const uaData = browser.userAgentData || {};
+        const ipInfo = ipInfoCache.get(record.ip_address);
+        const ipLocation = ipInfo
+          ? [
+            [ipInfo.city, ipInfo.regionName, ipInfo.country].filter(Boolean).join(", "),
+            ipInfo.zip,
+            ipInfo.timezone,
+            ipInfo.isp || ipInfo.org,
+            ipInfo.as
+          ].filter(Boolean).join(" | ")
+          : "Lookup unavailable";
         const screenText = typeof screen === "string"
           ? screen
           : [screen.width && `${screen.width}x${screen.height}`, screen.colorDepth && `${screen.colorDepth} bit`].filter(Boolean).join(" | ");
@@ -570,6 +619,7 @@
               <div class="mono muted">${escapeHtml(record.visitorId)}</div>
             </td>
             <td class="mono">${escapeHtml(record.ip_address || "")}</td>
+            <td class="mono">${escapeHtml(ipLocation)}</td>
             <td>${escapeHtml(formatDate(record.created_at))}</td>
             <td class="mono">${escapeHtml(page || "Not saved")}</td>
             <td class="mono">${escapeHtml(referrer)}</td>
@@ -606,6 +656,7 @@
           : [];
 
         renderRows();
+        loadIpInfo();
       } catch (error) {
         records = [];
         rowsEl.innerHTML = "";
@@ -617,11 +668,21 @@
     };
 
     const exportCsv = () => {
-      const headers = ["id", "visitor_id", "ip_address", "created_at", "page", "referrer", "language", "timezone", "screen", "viewport", "platform", "mobile", "model", "memory_gb", "cpu_threads", "touch_points", "network", "battery", "user_agent", "json"];
+      const headers = ["id", "visitor_id", "ip_address", "ip_country", "ip_region", "ip_city", "ip_zip", "ip_lat", "ip_lon", "ip_timezone", "ip_isp", "ip_org", "ip_as", "created_at", "page", "referrer", "language", "timezone", "screen", "viewport", "platform", "mobile", "model", "memory_gb", "cpu_threads", "touch_points", "network", "battery", "user_agent", "json"];
       const lines = records.map((record) => [
         record.id,
         record.visitorId,
         record.ip_address,
+        (ipInfoCache.get(record.ip_address) || {}).country,
+        (ipInfoCache.get(record.ip_address) || {}).regionName,
+        (ipInfoCache.get(record.ip_address) || {}).city,
+        (ipInfoCache.get(record.ip_address) || {}).zip,
+        (ipInfoCache.get(record.ip_address) || {}).lat,
+        (ipInfoCache.get(record.ip_address) || {}).lon,
+        (ipInfoCache.get(record.ip_address) || {}).timezone,
+        (ipInfoCache.get(record.ip_address) || {}).isp,
+        (ipInfoCache.get(record.ip_address) || {}).org,
+        (ipInfoCache.get(record.ip_address) || {}).as,
         record.created_at,
         record.message.page,
         record.message.referrer,
