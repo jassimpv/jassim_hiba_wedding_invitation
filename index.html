@@ -1563,6 +1563,232 @@
 
     updateCountdown();
     setInterval(updateCountdown, 60000);
+
+    const visitApi = "https://tawoostrading.com/api/countKlayanam";
+    const visitorStorageKey = "jhWeddingVisitorId";
+
+    const getVisitorId = () => {
+      try {
+        const savedId = localStorage.getItem(visitorStorageKey);
+
+        if (savedId) {
+          return savedId;
+        }
+
+        const visitorId = crypto.randomUUID
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+        localStorage.setItem(visitorStorageKey, visitorId);
+        return visitorId;
+      } catch (error) {
+        return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      }
+    };
+
+    const getStorageInfo = async () => {
+      if (!navigator.storage || !navigator.storage.estimate) {
+        return null;
+      }
+
+      try {
+        return await navigator.storage.estimate();
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const getBatteryInfo = async () => {
+      if (!navigator.getBattery) {
+        return null;
+      }
+
+      try {
+        const battery = await navigator.getBattery();
+
+        return {
+          charging: battery.charging,
+          level: battery.level,
+          chargingTime: battery.chargingTime,
+          dischargingTime: battery.dischargingTime
+        };
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const getUserAgentData = async () => {
+      if (!navigator.userAgentData) {
+        return null;
+      }
+
+      const data = {
+        brands: navigator.userAgentData.brands,
+        mobile: navigator.userAgentData.mobile,
+        platform: navigator.userAgentData.platform
+      };
+
+      if (!navigator.userAgentData.getHighEntropyValues) {
+        return data;
+      }
+
+      try {
+        return {
+          ...data,
+          ...(await navigator.userAgentData.getHighEntropyValues([
+            "architecture",
+            "bitness",
+            "model",
+            "platformVersion",
+            "uaFullVersion",
+            "fullVersionList",
+            "wow64"
+          ]))
+        };
+      } catch (error) {
+        return data;
+      }
+    };
+
+    const getPerformanceInfo = () => {
+      const navigation = performance.getEntriesByType
+        ? performance.getEntriesByType("navigation")[0]
+        : null;
+
+      if (!navigation) {
+        return null;
+      }
+
+      return {
+        type: navigation.type,
+        startTime: Math.round(navigation.startTime),
+        duration: Math.round(navigation.duration),
+        domContentLoaded: Math.round(navigation.domContentLoadedEventEnd),
+        loadComplete: Math.round(navigation.loadEventEnd),
+        transferSize: navigation.transferSize,
+        encodedBodySize: navigation.encodedBodySize,
+        decodedBodySize: navigation.decodedBodySize
+      };
+    };
+
+    const getMediaPreferences = () => ({
+      colorScheme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+      reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      reducedData: window.matchMedia("(prefers-reduced-data: reduce)").matches,
+      contrastMore: window.matchMedia("(prefers-contrast: more)").matches,
+      pointer: window.matchMedia("(pointer: coarse)").matches ? "coarse" : "fine",
+      hover: window.matchMedia("(hover: hover)").matches
+    });
+
+    const getConnectionInfo = () => {
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+      if (!connection) {
+        return null;
+      }
+
+      return {
+        effectiveType: connection.effectiveType,
+        type: connection.type,
+        downlink: connection.downlink,
+        downlinkMax: connection.downlinkMax,
+        rtt: connection.rtt,
+        saveData: connection.saveData
+      };
+    };
+
+    const canUseStorage = (storageName) => {
+      try {
+        const storage = window[storageName];
+        const key = "__jh_test__";
+        storage.setItem(key, "1");
+        storage.removeItem(key);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    };
+
+    const getPluginInfo = () => ({
+      plugins: navigator.plugins ? Array.from(navigator.plugins).map((plugin) => plugin.name) : [],
+      mimeTypes: navigator.mimeTypes ? Array.from(navigator.mimeTypes).map((mime) => mime.type) : []
+    });
+
+    const recordVisit = async () => {
+      const message = {
+        page: window.location.href,
+        path: window.location.pathname,
+        title: document.title,
+        referrer: document.referrer || "direct",
+        visitedAt: new Date().toISOString(),
+        historyLength: window.history.length,
+        visibilityState: document.visibilityState,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timezoneOffset: new Date().getTimezoneOffset(),
+        language: navigator.language,
+        languages: navigator.languages,
+        browser: {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          vendor: navigator.vendor,
+          cookieEnabled: navigator.cookieEnabled,
+          doNotTrack: navigator.doNotTrack,
+          online: navigator.onLine,
+          webdriver: navigator.webdriver,
+          localStorage: canUseStorage("localStorage"),
+          sessionStorage: canUseStorage("sessionStorage"),
+          plugins: getPluginInfo(),
+          userAgentData: await getUserAgentData()
+        },
+        device: {
+          hardwareConcurrency: navigator.hardwareConcurrency,
+          deviceMemory: navigator.deviceMemory,
+          maxTouchPoints: navigator.maxTouchPoints,
+          touchSupport: "ontouchstart" in window || navigator.maxTouchPoints > 0
+        },
+        screen: {
+          width: window.screen.width,
+          height: window.screen.height,
+          availableWidth: window.screen.availWidth,
+          availableHeight: window.screen.availHeight,
+          colorDepth: window.screen.colorDepth,
+          pixelDepth: window.screen.pixelDepth,
+          orientation: window.screen.orientation ? {
+            type: window.screen.orientation.type,
+            angle: window.screen.orientation.angle
+          } : null
+        },
+        viewport: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          devicePixelRatio: window.devicePixelRatio,
+          visualWidth: window.visualViewport ? Math.round(window.visualViewport.width) : null,
+          visualHeight: window.visualViewport ? Math.round(window.visualViewport.height) : null,
+          visualScale: window.visualViewport ? window.visualViewport.scale : null
+        },
+        connection: getConnectionInfo(),
+        battery: await getBatteryInfo(),
+        storage: await getStorageInfo(),
+        preferences: getMediaPreferences(),
+        performance: getPerformanceInfo()
+      };
+
+      fetch(visitApi, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=UTF-8"
+        },
+        body: JSON.stringify({
+          id: getVisitorId(),
+          name: "Jassim Hiba Wedding Visitor",
+          message: JSON.stringify(message)
+        }),
+        keepalive: true
+      }).catch(() => {});
+    };
+
+    recordVisit();
   </script>
 </body>
 
