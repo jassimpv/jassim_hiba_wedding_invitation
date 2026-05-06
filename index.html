@@ -1565,6 +1565,7 @@
     setInterval(updateCountdown, 60000);
 
     const visitApi = "https://tawoostrading.com/api/countKlayanam";
+    const geoApi = "https://ipapi.co/json/";
     const visitorStorageKey = "jhWeddingVisitorId";
 
     const getVisitorId = () => {
@@ -1714,7 +1715,24 @@
       mimeTypes: navigator.mimeTypes ? Array.from(navigator.mimeTypes).map((mime) => mime.type) : []
     });
 
+    const getIpApiInfo = async () => {
+      try {
+        const response = await fetch(geoApi, {
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          return null;
+        }
+
+        return await response.json();
+      } catch (error) {
+        return null;
+      }
+    };
+
     const recordVisit = async () => {
+      const ipApi = await getIpApiInfo();
       const message = {
         page: window.location.href,
         path: window.location.pathname,
@@ -1770,7 +1788,8 @@
         battery: await getBatteryInfo(),
         storage: await getStorageInfo(),
         preferences: getMediaPreferences(),
-        performance: getPerformanceInfo()
+        performance: getPerformanceInfo(),
+        ipApi
       };
 
       fetch(visitApi, {
