@@ -297,10 +297,147 @@
       letter-spacing: 0.06em;
     }
 
+    .details-button {
+      min-height: 2rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0 0.8rem;
+      background: var(--accent-soft);
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
     .empty {
       padding: 2rem;
       color: var(--muted);
       text-align: center;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      background: rgba(44, 33, 27, 0.38);
+    }
+
+    .modal[hidden] {
+      display: none;
+    }
+
+    .modal-card {
+      width: min(980px, 100%);
+      max-height: min(86vh, 760px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 24px 80px rgba(44, 33, 27, 0.22);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(244, 230, 218, 0.5);
+    }
+
+    .modal-head h2 {
+      font-family: "Fraunces", serif;
+      font-size: 1.5rem;
+      color: var(--accent);
+      letter-spacing: 0;
+    }
+
+    .modal-close {
+      width: 2.4rem;
+      height: 2.4rem;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #fff;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .modal-body {
+      overflow: auto;
+      padding: 1rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .detail-section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      padding: 1rem;
+    }
+
+    .detail-section.full {
+      grid-column: 1 / -1;
+    }
+
+    .detail-section h3 {
+      margin-bottom: 0.75rem;
+      color: var(--accent);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 9rem minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: start;
+    }
+
+    .detail-row span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .detail-row strong {
+      min-width: 0;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .raw-json {
+      max-height: 18rem;
+      overflow: auto;
+      border: 1px solid rgba(114, 88, 67, 0.1);
+      border-radius: 8px;
+      padding: 0.85rem;
+      background: #fff;
+      white-space: pre-wrap;
     }
 
     @media (max-width: 760px) {
@@ -324,6 +461,15 @@
 
       .stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-row {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
       }
     }
 
@@ -393,6 +539,7 @@
               <th>Referrer</th>
               <th>Device</th>
               <th>More Data</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody id="visitorRows"></tbody>
@@ -401,6 +548,16 @@
       <div class="empty" id="emptyState" hidden>No visitor records found.</div>
     </section>
   </main>
+
+  <div class="modal" id="detailModal" hidden>
+    <article class="modal-card" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <div class="modal-head">
+        <h2 id="detailTitle">Visitor Details</h2>
+        <button class="modal-close" type="button" id="closeDetailButton" aria-label="Close details">x</button>
+      </div>
+      <div class="modal-body" id="detailBody"></div>
+    </article>
+  </div>
 
   <script>
     const apiUrl = "https://tawoostrading.com/api/getKlayanam";
@@ -414,6 +571,9 @@
     const uniqueVisitors = document.getElementById("uniqueVisitors");
     const uniqueIps = document.getElementById("uniqueIps");
     const todayVisits = document.getElementById("todayVisits");
+    const detailModal = document.getElementById("detailModal");
+    const detailBody = document.getElementById("detailBody");
+    const closeDetailButton = document.getElementById("closeDetailButton");
     const ipApiBase = "http://ip-api.com/json/";
 
     let records = [];
@@ -513,6 +673,42 @@
       await Promise.all(ips.map(getIpInfo));
       renderRows();
     };
+
+    const formatValue = (value) => {
+      if (value === null || value === undefined || value === "") {
+        return "Not saved";
+      }
+
+      if (typeof value === "boolean") {
+        return value ? "Yes" : "No";
+      }
+
+      if (Array.isArray(value)) {
+        return value.length
+          ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : item).join(", ")
+          : "Not saved";
+      }
+
+      if (typeof value === "object") {
+        return JSON.stringify(value);
+      }
+
+      return value;
+    };
+
+    const makeRows = (items) => items.map(([label, value]) => `
+      <div class="detail-row">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(formatValue(value))}</strong>
+      </div>
+    `).join("");
+
+    const makeSection = (title, items, full = false) => `
+      <section class="detail-section${full ? " full" : ""}">
+        <h3>${escapeHtml(title)}</h3>
+        <div class="detail-list">${makeRows(items)}</div>
+      </section>
+    `;
 
     const formatDate = (value) => {
       if (!value) {
@@ -628,12 +824,164 @@
               <div class="mono muted">${escapeHtml(userAgent)}</div>
             </td>
             <td class="mono">${escapeHtml(moreData || "Not saved")}</td>
+            <td>
+              <button class="details-button" type="button" data-record-id="${escapeHtml(record.id)}">View</button>
+            </td>
           </tr>
         `;
       }).join("");
 
       emptyState.hidden = visibleRecords.length > 0;
       updateStats(visibleRecords);
+    };
+
+    const openDetails = async (recordId) => {
+      const record = records.find((item) => String(item.id) === String(recordId));
+
+      if (!record) {
+        return;
+      }
+
+      detailModal.hidden = false;
+      detailBody.innerHTML = `<p class="status">Loading details...</p>`;
+
+      const ipInfo = record.ip_address ? await getIpInfo(record.ip_address) : null;
+      const message = record.message || {};
+      const browser = message.browser || {};
+      const uaData = browser.userAgentData || {};
+      const device = message.device || {};
+      const screen = message.screen || {};
+      const viewport = message.viewport || {};
+      const connection = message.connection || {};
+      const battery = message.battery || {};
+      const storage = message.storage || {};
+      const preferences = message.preferences || {};
+      const performanceData = message.performance || {};
+      const pluginData = browser.plugins || {};
+      const model = uaData.model || "Not provided by browser";
+      const fullJson = {
+        record,
+        ipApi: ipInfo
+      };
+
+      detailBody.innerHTML = `
+        <div class="detail-grid">
+          ${makeSection("Record", [
+            ["Record ID", record.id],
+            ["Visitor ID", record.visitorId],
+            ["Request ID", record.request_id],
+            ["Created", formatDate(record.created_at)],
+            ["Updated", formatDate(record.updated_at)]
+          ])}
+          ${makeSection("IP API", [
+            ["IP", record.ip_address],
+            ["Country", ipInfo && ipInfo.country],
+            ["Region", ipInfo && ipInfo.regionName],
+            ["City", ipInfo && ipInfo.city],
+            ["ZIP", ipInfo && ipInfo.zip],
+            ["Latitude", ipInfo && ipInfo.lat],
+            ["Longitude", ipInfo && ipInfo.lon],
+            ["Timezone", ipInfo && ipInfo.timezone],
+            ["ISP", ipInfo && ipInfo.isp],
+            ["Org", ipInfo && ipInfo.org],
+            ["AS", ipInfo && ipInfo.as],
+            ["Lookup", ipInfo ? "Loaded from ip-api.com" : "Unavailable or blocked"]
+          ])}
+          ${makeSection("Device Model", [
+            ["Model", model],
+            ["Mobile", uaData.mobile],
+            ["UA Platform", uaData.platform],
+            ["Platform Version", uaData.platformVersion],
+            ["Architecture", uaData.architecture],
+            ["Bitness", uaData.bitness],
+            ["Device Memory", device.deviceMemory ? `${device.deviceMemory} GB` : ""],
+            ["CPU Threads", device.hardwareConcurrency],
+            ["Max Touch Points", device.maxTouchPoints],
+            ["Touch Support", device.touchSupport]
+          ])}
+          ${makeSection("Browser", [
+            ["User Agent", browser.userAgent || message.userAgent],
+            ["Platform", browser.platform],
+            ["Vendor", browser.vendor],
+            ["Languages", message.languages],
+            ["Language", message.language],
+            ["Cookies", browser.cookieEnabled],
+            ["Do Not Track", browser.doNotTrack],
+            ["Online", browser.online],
+            ["Webdriver", browser.webdriver],
+            ["Local Storage", browser.localStorage],
+            ["Session Storage", browser.sessionStorage],
+            ["Brands", uaData.fullVersionList || uaData.brands]
+          ], true)}
+          ${makeSection("Screen", [
+            ["Screen", typeof screen === "string" ? screen : `${screen.width || ""}x${screen.height || ""}`],
+            ["Available", screen.availableWidth ? `${screen.availableWidth}x${screen.availableHeight}` : ""],
+            ["Viewport", viewport.width ? `${viewport.width}x${viewport.height}` : ""],
+            ["Visual Viewport", viewport.visualWidth ? `${viewport.visualWidth}x${viewport.visualHeight}` : ""],
+            ["DPR", viewport.devicePixelRatio],
+            ["Color Depth", screen.colorDepth],
+            ["Pixel Depth", screen.pixelDepth],
+            ["Orientation", screen.orientation]
+          ])}
+          ${makeSection("Network", [
+            ["Effective Type", connection.effectiveType],
+            ["Type", connection.type],
+            ["Downlink", connection.downlink ? `${connection.downlink} Mbps` : ""],
+            ["Max Downlink", connection.downlinkMax],
+            ["RTT", connection.rtt ? `${connection.rtt} ms` : ""],
+            ["Save Data", connection.saveData]
+          ])}
+          ${makeSection("Page", [
+            ["Page", message.page],
+            ["Path", message.path],
+            ["Title", message.title],
+            ["Referrer", message.referrer],
+            ["Visited At", message.visitedAt],
+            ["History Length", message.historyLength],
+            ["Visibility", message.visibilityState],
+            ["Browser Timezone", message.timezone],
+            ["Timezone Offset", message.timezoneOffset]
+          ], true)}
+          ${makeSection("Battery And Storage", [
+            ["Battery", battery.level !== undefined ? `${Math.round(battery.level * 100)}%` : ""],
+            ["Charging", battery.charging],
+            ["Charging Time", battery.chargingTime],
+            ["Discharging Time", battery.dischargingTime],
+            ["Storage Usage", storage.usage ? `${Math.round(storage.usage / 1048576)} MB` : ""],
+            ["Storage Quota", storage.quota ? `${Math.round(storage.quota / 1048576)} MB` : ""]
+          ])}
+          ${makeSection("Preferences", [
+            ["Color Scheme", preferences.colorScheme],
+            ["Reduced Motion", preferences.reducedMotion],
+            ["Reduced Data", preferences.reducedData],
+            ["More Contrast", preferences.contrastMore],
+            ["Pointer", preferences.pointer],
+            ["Hover", preferences.hover]
+          ])}
+          ${makeSection("Performance", [
+            ["Type", performanceData.type],
+            ["Duration", performanceData.duration ? `${performanceData.duration} ms` : ""],
+            ["DOM Loaded", performanceData.domContentLoaded ? `${performanceData.domContentLoaded} ms` : ""],
+            ["Load Complete", performanceData.loadComplete ? `${performanceData.loadComplete} ms` : ""],
+            ["Transfer Size", performanceData.transferSize],
+            ["Encoded Body", performanceData.encodedBodySize],
+            ["Decoded Body", performanceData.decodedBodySize]
+          ])}
+          ${makeSection("Plugins", [
+            ["Plugins", pluginData.plugins],
+            ["Mime Types", pluginData.mimeTypes]
+          ])}
+          <section class="detail-section full">
+            <h3>Raw JSON</h3>
+            <pre class="raw-json mono">${escapeHtml(JSON.stringify(fullJson, null, 2))}</pre>
+          </section>
+        </div>
+      `;
+    };
+
+    const closeDetails = () => {
+      detailModal.hidden = true;
+      detailBody.innerHTML = "";
     };
 
     const loadVisitors = async () => {
@@ -714,6 +1062,26 @@
     searchInput.addEventListener("input", renderRows);
     refreshButton.addEventListener("click", loadVisitors);
     exportButton.addEventListener("click", exportCsv);
+    rowsEl.addEventListener("click", (event) => {
+      const button = event.target.closest(".details-button");
+
+      if (!button) {
+        return;
+      }
+
+      openDetails(button.dataset.recordId);
+    });
+    closeDetailButton.addEventListener("click", closeDetails);
+    detailModal.addEventListener("click", (event) => {
+      if (event.target === detailModal) {
+        closeDetails();
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !detailModal.hidden) {
+        closeDetails();
+      }
+    });
 
     loadVisitors();
   </script>
