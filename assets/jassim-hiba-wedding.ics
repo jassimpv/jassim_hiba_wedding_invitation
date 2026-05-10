@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Jassim Hiba Wedding Invitation//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:jassim-hiba-wedding-20260720@jassimpv.github.io
+DTSTAMP:20260510T000000Z
+DTSTART:20260720T053000Z
+DTEND:20260720T083000Z
+SUMMARY:Jassim & Hiba Wedding Invitation
+DESCRIPTION:Nikah and lunch reception. Your presence, duas, and blessings mean the most to us.
+LOCATION:Gameo Convention Center, Vavanoor, Pattambi Road
+END:VEVENT
+END:VCALENDAR
