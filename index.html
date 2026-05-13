@@ -544,63 +544,6 @@
       font-weight: 800;
     }
 
-    .music-toggle {
-      position: fixed;
-      right: 1rem;
-      bottom: 1rem;
-      z-index: 60;
-      display: inline-grid;
-      place-items: center;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      border: 1px solid rgba(180, 122, 9, 0.22);
-      background:
-        radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.72), transparent 26%),
-        linear-gradient(135deg, rgba(255, 254, 250, 0.94), rgba(247, 235, 208, 0.9));
-      color: var(--accent-strong);
-      box-shadow: 0 16px 32px rgba(31, 54, 45, 0.14);
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(0.7rem) scale(0.94);
-      transition: opacity 0.4s ease, transform 0.4s ease, color 0.25s ease;
-    }
-
-    body.invite-ready .music-toggle {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
-    }
-
-    .music-toggle.is-playing {
-      color: var(--sage-deep);
-      animation: musicPulse 1.8s ease-in-out infinite;
-    }
-
-    .music-toggle svg {
-      width: 1.2rem;
-      height: 1.2rem;
-      stroke: currentColor;
-      stroke-width: 1.9;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    @keyframes musicPulse {
-      0%,
-      100% {
-        box-shadow: 0 16px 32px rgba(31, 54, 45, 0.14);
-      }
-
-      50% {
-        box-shadow:
-          0 18px 34px rgba(31, 54, 45, 0.16),
-          0 0 0 10px rgba(49, 89, 72, 0.08);
-      }
-    }
-
     .section {
       padding: 2rem 0 6rem;
     }
@@ -1824,6 +1767,618 @@
         transform: none;
       }
     }
+
+    /* Fresh editorial redesign overrides */
+    :root {
+      --bg: #f6f1e9;
+      --bg-soft: #fffaf1;
+      --paper: rgba(255, 252, 244, 0.9);
+      --card: #fffaf1;
+      --text: #1f241f;
+      --muted: #68655c;
+      --muted-soft: #8a8578;
+      --line: rgba(48, 72, 58, 0.18);
+      --accent: #b5832e;
+      --accent-strong: #7b5418;
+      --accent-soft: #efe0bf;
+      --sage: #8ca090;
+      --sage-deep: #244838;
+      --sage-soft: #e4ece5;
+      --rose: #f6ded5;
+      --shadow: 0 18px 48px rgba(31, 42, 34, 0.12);
+      --radius-lg: 8px;
+      --radius-md: 8px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      color: var(--text);
+      background:
+        linear-gradient(90deg, rgba(31, 36, 31, 0.055) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(31, 36, 31, 0.045) 1px, transparent 1px),
+        linear-gradient(135deg, #fffaf1 0%, #f6f1e9 45%, #e7eee5 100%);
+      background-size: 88px 88px, 88px 88px, auto;
+    }
+
+    body::before,
+    body::after,
+    .hero::after {
+      display: none;
+    }
+
+    #progress {
+      height: 4px;
+      background: linear-gradient(90deg, var(--sage-deep), var(--accent), #c9614a);
+    }
+
+    .opening-screen {
+      background:
+        linear-gradient(90deg, rgba(31, 36, 31, 0.055) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(31, 36, 31, 0.045) 1px, transparent 1px),
+        linear-gradient(145deg, #fffaf1 0%, #f4e4d4 45%, #e4ece5 100%);
+      background-size: 88px 88px, 88px 88px, auto;
+    }
+
+    .opening-stage {
+      width: min(100vw, 38rem);
+      background: transparent;
+    }
+
+    .opening-stage::before,
+    .opening-stage::after,
+    .opening-leaf {
+      display: none;
+    }
+
+    .envelope {
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, transparent 0 49.5%, rgba(123, 84, 24, 0.2) 50%, transparent 50.5%),
+        linear-gradient(45deg, transparent 0 49.5%, rgba(123, 84, 24, 0.16) 50%, transparent 50.5%),
+        linear-gradient(180deg, rgba(255, 250, 241, 0.98), rgba(228, 236, 229, 0.58));
+      box-shadow: 0 34px 90px rgba(31, 42, 34, 0.18);
+    }
+
+    .envelope::before,
+    .envelope-card {
+      border-radius: 8px;
+    }
+
+    .envelope-seal {
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--sage-deep), #10251d);
+      box-shadow: 0 16px 28px rgba(36, 72, 56, 0.24);
+    }
+
+    .opening-copy strong,
+    .hero-title-name,
+    .section-head h2,
+    .card-copy h2 {
+      letter-spacing: 0;
+    }
+
+    .opening-copy {
+      width: min(100%, 34rem);
+      padding: 0 1rem;
+    }
+
+    .opening-copy strong {
+      display: block;
+      width: 100%;
+      font-size: clamp(2.35rem, 9vw, 3.35rem);
+      line-height: 1;
+      max-width: 100%;
+      overflow-wrap: normal;
+      text-align: center;
+    }
+
+    .site-header {
+      top: 0.7rem;
+      padding: 0.8rem 0;
+    }
+
+    .nav {
+      border-radius: 8px;
+      padding: 0.6rem;
+      background: rgba(255, 250, 241, 0.9);
+      border-color: rgba(36, 72, 56, 0.18);
+      box-shadow: 0 18px 42px rgba(31, 42, 34, 0.1);
+    }
+
+    .nav.scrolled {
+      background: rgba(255, 250, 241, 0.96);
+      border-color: rgba(36, 72, 56, 0.24);
+      transform: none;
+    }
+
+    .brand {
+      color: var(--text);
+    }
+
+    .brand-mark,
+    .footer-mark {
+      border-radius: 8px;
+      background: var(--sage-deep);
+      border-color: var(--sage-deep);
+      color: #fffaf1;
+      box-shadow: none;
+    }
+
+    .nav-links {
+      border-radius: 8px;
+      background: rgba(228, 236, 229, 0.66);
+      border: 0;
+    }
+
+    .nav-links a,
+    .nav-cta {
+      border-radius: 6px;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.on,
+    .nav-cta:hover {
+      background: #fffaf1;
+      color: var(--sage-deep);
+      transform: none;
+    }
+
+    .nav-cta {
+      background: var(--text);
+      color: #fffaf1;
+      border-radius: 6px;
+    }
+
+    .section {
+      padding: 4.2rem 0;
+    }
+
+    .hero {
+      min-height: calc(100svh - 5rem);
+      padding-top: 3rem;
+      display: grid;
+      align-items: center;
+    }
+
+    .hero::before {
+      inset: 8% -8rem auto auto;
+      width: min(42vw, 30rem);
+      opacity: 0.12;
+      border-radius: 8px;
+      transform: rotate(4deg);
+      filter: saturate(0.88);
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.72fr);
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+
+    .hero-copy,
+    .hero-intro-card,
+    .hero-meta,
+    .hero-meta-note,
+    .date-en,
+    .hero-lead,
+    .timeline-copy,
+    .location-item strong {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .date-en {
+      white-space: normal;
+    }
+
+    .hero-intro-card,
+    .card-copy,
+    .couple-card,
+    .schedule-panel,
+    .notes-panel,
+    .location-panel,
+    .footer-card,
+    .fact-card,
+    .map-card {
+      border-radius: 8px;
+      background: rgba(255, 250, 241, 0.86);
+      border: 1px solid rgba(36, 72, 56, 0.16);
+      box-shadow: 0 18px 48px rgba(31, 42, 34, 0.1);
+    }
+
+    .hero-intro-card {
+      padding: clamp(1.35rem, 3.3vw, 2.6rem);
+      background:
+        linear-gradient(135deg, rgba(228, 236, 229, 0.76), rgba(255, 250, 241, 0.92) 45%),
+        rgba(255, 250, 241, 0.92);
+    }
+
+    .hero-intro-card::before {
+      background:
+        linear-gradient(90deg, rgba(36, 72, 56, 0.16), transparent 32%),
+        linear-gradient(180deg, transparent 75%, rgba(181, 131, 46, 0.1));
+    }
+
+    .hero-chip,
+    .schedule-badge {
+      border-radius: 6px;
+      background: var(--text);
+      border-color: var(--text);
+      color: #fffaf1;
+    }
+
+    .hero-meta-note,
+    .fact-label,
+    .couple-index,
+    .location-item span,
+    .footer-card small,
+    .dua-card span {
+      letter-spacing: 0.16em;
+    }
+
+    .arabic,
+    .date-ar,
+    .footer-card .dua {
+      color: var(--accent-strong);
+    }
+
+    .hero-title-name {
+      font-size: clamp(3.4rem, 12vw, 8.6rem);
+      line-height: 0.82;
+      color: #172019;
+    }
+
+    .hero-title-pair {
+      gap: 1rem;
+      padding-left: 0;
+    }
+
+    .hero-amp-mark {
+      border-radius: 8px;
+      background: #fffaf1;
+      color: var(--accent-strong);
+      box-shadow: inset 0 0 0 1px rgba(181, 131, 46, 0.24);
+    }
+
+    .hero-lead {
+      max-width: 39rem;
+      color: #514f47;
+      font-size: clamp(1rem, 1.3vw, 1.14rem);
+    }
+
+    .hero-celebrate-card {
+      border-radius: 8px;
+      background: #fffaf1;
+      border-left: 5px solid var(--accent);
+      box-shadow: none;
+    }
+
+    .hero-symbols {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .symbol-chip,
+    .media-badge,
+    .btn,
+    .location-item,
+    .timeline-item,
+    .timeline-time,
+    .dua-card,
+    .footer-icon {
+      border-radius: 8px;
+    }
+
+    .symbol-chip,
+    .location-item,
+    .timeline-item,
+    .dua-card {
+      background: rgba(255, 255, 255, 0.62);
+      border-color: rgba(36, 72, 56, 0.14);
+      box-shadow: none;
+    }
+
+    .symbol-chip {
+      justify-content: center;
+      min-width: 0;
+      padding: 0.45rem 0.55rem;
+    }
+
+    .symbol-chip span {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .fact-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .fact-card {
+      padding: 1.1rem;
+      background: rgba(255, 250, 241, 0.78);
+    }
+
+    .fact-value {
+      color: var(--sage-deep);
+      font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+    }
+
+    .hero-actions {
+      gap: 0.65rem;
+    }
+
+    .btn {
+      min-height: 3.1rem;
+      padding: 0.85rem 1rem;
+      letter-spacing: 0.12em;
+    }
+
+    .btn-primary {
+      background: var(--sage-deep);
+      color: #fffaf1;
+      box-shadow: 0 16px 28px rgba(36, 72, 56, 0.2);
+    }
+
+    .btn-secondary {
+      background: #fffaf1;
+      color: var(--accent-strong);
+      border-color: rgba(181, 131, 46, 0.32);
+    }
+
+    .btn-quiet {
+      background: var(--text);
+      color: #fffaf1;
+      border-color: var(--text);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .media-card {
+      border-radius: 8px;
+      box-shadow: 0 24px 60px rgba(31, 42, 34, 0.16);
+    }
+
+    .media-card-large {
+      min-height: min(72svh, 42rem);
+      border: 10px solid #fffaf1;
+    }
+
+    .media-card-large::before {
+      inset: 0;
+      border-radius: 0;
+      border-color: rgba(255, 250, 241, 0.72);
+    }
+
+    .media-badge {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fffaf1;
+    }
+
+    .card-showcase {
+      grid-template-columns: minmax(17rem, 0.62fr) minmax(0, 1fr);
+      gap: clamp(1.2rem, 4vw, 3rem);
+    }
+
+    .card-copy {
+      min-height: 100%;
+      align-content: center;
+      background:
+        linear-gradient(135deg, rgba(246, 222, 213, 0.5), transparent 34%),
+        rgba(255, 250, 241, 0.9);
+    }
+
+    .card-copy h2,
+    .section-head h2 {
+      color: #172019;
+    }
+
+    .invitation-card {
+      width: min(100%, 25rem);
+      justify-self: center;
+      background: #fffaf1;
+      border: 10px solid #fffaf1;
+      border-radius: 8px;
+      box-shadow: 0 24px 70px rgba(31, 42, 34, 0.18);
+    }
+
+    .invitation-card img {
+      padding: 0;
+    }
+
+    .section-head {
+      max-width: 58rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .eyebrow {
+      color: var(--sage-deep);
+    }
+
+    .eyebrow::before {
+      background: linear-gradient(90deg, var(--sage-deep), transparent);
+    }
+
+    .couple-grid {
+      gap: 0.9rem;
+    }
+
+    .couple-card {
+      padding: clamp(1.2rem, 2.8vw, 2rem);
+      background: rgba(255, 250, 241, 0.82);
+      border-top: 5px solid var(--sage-deep);
+    }
+
+    .couple-card:nth-child(2) {
+      border-top-color: var(--accent);
+    }
+
+    .couple-card h3 {
+      color: #172019;
+    }
+
+    .schedule-layout,
+    .location-layout {
+      grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+      gap: clamp(1rem, 3vw, 2rem);
+    }
+
+    .schedule-panel,
+    .location-panel {
+      padding: clamp(1.25rem, 3vw, 2rem);
+    }
+
+    .timeline-time {
+      background: var(--sage-deep);
+      color: #fffaf1;
+    }
+
+    .notes-panel {
+      grid-template-rows: minmax(18rem, 28rem) auto;
+      background: #fffaf1;
+    }
+
+    .notes-copy {
+      background:
+        linear-gradient(135deg, rgba(228, 236, 229, 0.72), transparent 45%),
+        #fffaf1;
+    }
+
+    .notes-title,
+    .schedule-panel h3,
+    .location-panel h3 {
+      color: #172019;
+    }
+
+    .map-card,
+    .map-card iframe {
+      min-height: 34rem;
+    }
+
+    .footer-card {
+      background: var(--text);
+      color: #fffaf1;
+    }
+
+    .footer-card small,
+    .footer-card p {
+      color: rgba(255, 250, 241, 0.76);
+    }
+
+    .footer-mark,
+    .footer-icon {
+      background: rgba(255, 250, 241, 0.1);
+      border-color: rgba(255, 250, 241, 0.18);
+      color: #fffaf1;
+    }
+
+    .footer-icon svg {
+      stroke: #e4c178;
+    }
+
+    .footer-card .dua {
+      color: #e4c178;
+    }
+
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .card-showcase,
+      .schedule-layout,
+      .location-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .fact-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .site-header {
+        top: 0;
+      }
+
+      .nav {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+      }
+
+      .section {
+        padding: 3.1rem 0;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 1.4rem;
+      }
+
+      .hero-title-name {
+        font-size: clamp(3rem, 18vw, 5rem);
+      }
+
+      .opening-copy strong {
+        font-size: clamp(2rem, 9vw, 2.28rem);
+      }
+
+      .hero-intro-card,
+      .hero-intro-card * {
+        min-width: 0;
+      }
+
+      .hero-intro-card {
+        width: min(100%, 358px);
+        overflow: hidden;
+      }
+
+      .hero-meta,
+      .hero-meta-note.bilingual-date,
+      .date-en {
+        display: block;
+        width: 100%;
+      }
+
+      .hero-meta-note {
+        line-height: 1.55;
+      }
+
+      .hero-meta-note,
+      .hero-lead,
+      .hero-celebrate-card p {
+        max-width: 278px;
+      }
+
+      .hero-amp-mark {
+        width: 3.4rem;
+        height: 3.4rem;
+        font-size: 2rem;
+      }
+
+      .fact-grid,
+      .couple-grid,
+      .dua-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-symbols {
+        grid-template-columns: 1fr;
+      }
+
+      .media-card-large {
+        min-height: 28rem;
+      }
+
+      .card-showcase {
+        gap: 1rem;
+      }
+
+      .timeline-item {
+        gap: 0.7rem;
+      }
+    }
   </style>
 </head>
 
@@ -1879,7 +2434,7 @@
               <div class="hero-meta">
                 <span class="hero-chip">Wedding Invitation</span>
                 <span class="hero-meta-note bilingual-date">
-                  <span class="date-en">Monday, 20 July 2026 • 5 Muharram 1448 AH</span>    </span>
+                  <span class="date-en">Monday, 20 July 2026 • 5 Safar 1448 AH</span>    </span>
               </div>
               <p class="arabic" lang="ar">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
               <h1 class="hero-title-alt">
@@ -1984,7 +2539,10 @@
 
       <section class="section" id="card">
         <div class="container card-showcase">
-        
+          <figure class="media-card invitation-card reveal">
+            <img src="assets/invitation-card.png"
+              alt="Wedding invitation card for Jassim and Hiba with date, venue, and family details" />
+          </figure>
 
           <div class="card-copy reveal">
             <p class="eyebrow">Invitation Card</p>
@@ -2038,11 +2596,26 @@
             <h3>Nikah &amp; Reception</h3>
 
             <div class="timeline">
+                <article class="timeline-item">
+                  <div class="timeline-time">Date</div>
+                  <div class="timeline-copy">
+                    <div class="bilingual-date">
+                      <strong>Saturday, 18 July 2026 • 3 Safar 1448 AH</strong>
+                    </div>
+                    <p>The nikkah ceremony of JASSIM and SIBANA begins at 11:00 AM at Maas Community Hall
+                    Convention center in Ponnani </p>
+                    <p>
+                      <strong>Google Map:</strong>
+                      <a href="https://www.google.com/maps/search/?api=1&amp;query=Maas+Community+Hall+Convention+Center+Ponnani"
+                        target="_blank" rel="noreferrer">Maas Community Hall Convention Center, Ponnani</a>
+                    </p>
+                  </div>
+                </article>
               <article class="timeline-item">
                 <div class="timeline-time">Date</div>
                 <div class="timeline-copy">
                   <div class="bilingual-date">
-                    <strong>Monday, 20 July 2026 • 5 Muharram 1448 AH</strong> </div>
+                    <strong>Monday, 20 July 2026 • 5 Safar 1448 AH</strong> </div>
                   <p>Please join us for a gracious daytime gathering of faith, family, and celebration.</p>
                 </div>
               </article>
@@ -2051,7 +2624,7 @@
                 <div class="timeline-time">11 AM</div>
                 <div class="timeline-copy">
                   <strong>Nikah Ceremony</strong>
-                  <p>The main ceremony begins at 11:00 AM at Gameo Convention Center.</p>
+                  <p>The nikkah ceremony of HIBA and SHAFEEk begins at 11:00 AM at Gameo Convention Center.</p>
                 </div>
               </article>
 
@@ -2059,7 +2632,7 @@
                 <div class="timeline-time">Hijri</div>
                 <div class="timeline-copy">
                   <div class="bilingual-date">
-                    <strong>Monday, 5 Muharram 1448 AH (approximate)</strong> </div>
+                    <strong>Monday, 5 Safar 1448 AH (approximate)</strong> </div>
                   <p>The Hijri date is included as a helpful reference for guests and family.</p>
                 </div>
               </article>
@@ -2195,14 +2768,6 @@
     </footer>
   </div>
 
-  <button class="music-toggle" id="music-toggle" type="button" aria-label="Pause music" aria-pressed="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M9 18V5l10-2v13" />
-      <path d="M9 18a3 3 0 1 1-2-2.83" />
-      <path d="M19 16a3 3 0 1 1-2-2.83" />
-    </svg>
-  </button>
-
   <script>
     const nav = document.getElementById("nav");
     const progress = document.getElementById("progress");
@@ -2211,83 +2776,7 @@
     const shareButtons = document.querySelectorAll("#share-button, #card-share-button");
     const openingScreen = document.getElementById("opening-screen");
     const openInviteSeal = document.getElementById("open-invite-seal");
-    const musicToggle = document.getElementById("music-toggle");
-    let audioContext = null;
-    let musicTimer = null;
-    let musicEnabled = false;
     let hasOpenedInvite = false;
-
-    const playTone = (frequency, startTime, duration, gainValue = 0.045) => {
-      const oscillator = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-
-      oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(frequency, startTime);
-      gain.gain.setValueAtTime(0.0001, startTime);
-      gain.gain.exponentialRampToValueAtTime(gainValue, startTime + 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-      oscillator.connect(gain).connect(audioContext.destination);
-      oscillator.start(startTime);
-      oscillator.stop(startTime + duration + 0.05);
-    };
-
-    const playMusicPhrase = () => {
-      if (!audioContext || !musicEnabled) {
-        return;
-      }
-
-      const now = audioContext.currentTime + 0.05;
-      const notes = [392, 493.88, 587.33, 659.25, 587.33, 493.88];
-
-      notes.forEach((note, index) => {
-        playTone(note, now + index * 0.42, 0.95, 0.035);
-        playTone(note / 2, now + index * 0.42, 1.2, 0.014);
-      });
-    };
-
-    const startMusic = async () => {
-      const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
-
-      if (!AudioContextConstructor) {
-        return;
-      }
-
-      if (!audioContext) {
-        audioContext = new AudioContextConstructor();
-      }
-
-      if (audioContext.state === "suspended") {
-        await audioContext.resume();
-      }
-
-      musicEnabled = true;
-      musicToggle.classList.add("is-playing");
-      musicToggle.setAttribute("aria-pressed", "true");
-      musicToggle.setAttribute("aria-label", "Pause music");
-      playMusicPhrase();
-      window.clearInterval(musicTimer);
-      musicTimer = window.setInterval(playMusicPhrase, 3600);
-    };
-
-    const stopMusic = () => {
-      musicEnabled = false;
-      window.clearInterval(musicTimer);
-      musicTimer = null;
-      musicToggle.classList.remove("is-playing");
-      musicToggle.setAttribute("aria-pressed", "false");
-      musicToggle.setAttribute("aria-label", "Play music");
-    };
-
-    const toggleMusic = () => {
-      if (musicEnabled) {
-        stopMusic();
-        return;
-      }
-
-      startMusic().catch(() => {
-        stopMusic();
-      });
-    };
 
     const finishOpening = () => {
       if (hasOpenedInvite) {
@@ -2296,7 +2785,6 @@
 
       hasOpenedInvite = true;
       openingScreen.classList.add("is-opening");
-      startMusic().catch(() => {});
 
       window.setTimeout(() => {
         openingScreen.classList.add("is-hidden");
@@ -2320,8 +2808,6 @@
         finishOpening();
       }, { once: true });
     }
-
-    musicToggle.addEventListener("click", toggleMusic);
 
     const setScrollState = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
